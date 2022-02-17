@@ -4,6 +4,10 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 app.use(cors());
+
+// app.get("/", (req, res)=>{
+//   res.status(200).json({message:"welcome to marvel api"})
+// })
 // Comics
 const comicsRoutes = require("./routes/comics");
 app.use(comicsRoutes);

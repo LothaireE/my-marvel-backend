@@ -2,6 +2,7 @@ const { default: axios } = require("axios");
 const express = require("express");
 const formidable = require("express-formidable");
 const router = express.Router();
+const cors = require("cors");
 
 router.get("/comics", async (req, res) => {
   const limit = 100;
