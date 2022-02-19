@@ -5,10 +5,12 @@ const router = express.Router();
 const cors = require("cors");
 
 router.get("/comics", async (req, res) => {
-  console.log(req.query.title);
+  console.log(req.query.limit);
   //   const limit = 100;
   //   &limit=${limit}
-  const title = req.query.title;
+  // const title = req.query.title;
+  // const limit = req.query.limit;
+  // &limit=${limit}
   try {
     console.log(title);
     const response = await axios.get(
@@ -20,11 +22,10 @@ router.get("/comics", async (req, res) => {
 });
 
 router.get("/comics/:characterId", async (req, res) => {
-  const limit = 100;
   characterId = req.params.characterId;
   try {
     const response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/comics/${characterId}?apiKey=${process.env.MY_MARVEL_API_KEY}&limit=${limit}`
+      `https://lereacteur-marvel-api.herokuapp.com/comics/${characterId}?apiKey=${process.env.MY_MARVEL_API_KEY}`
     );
     console.log("/comics/:characterId");
     res.status(200).json(response.data);
