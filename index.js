@@ -4,12 +4,16 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 app.use(cors());
-// app.use(formidableMiddleware());
+app.use(formidable());
 
 // app.get("/", (req, res)=>{
 //   res.status(200).json({message:"welcome to marvel api"})
 // })
 // Comics
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb://localhost/marvelusers");
+
 const comicsRoutes = require("./routes/comics");
 app.use(comicsRoutes);
 
