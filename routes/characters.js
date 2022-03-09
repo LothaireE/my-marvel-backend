@@ -4,7 +4,7 @@ const formidable = require("express-formidable");
 const router = express.Router();
 
 router.get("/characters", async (req, res) => {
-  console.log("1 ======>", req.query.name);
+  // console.log("1 ======>", req.query.name);
   const name = req.query.name;
   //   const limit = req.query.limit;
   //   const page = req.query.page;
