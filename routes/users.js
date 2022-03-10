@@ -10,7 +10,7 @@ const User = require("../models/User");
 
 router.post("/users/signup", async (req, res) => {
   //   console.log(req.fields);
-  res.status(200).json({ message: "sign up route activated" });
+  //   res.status(200).json({ message: "sign up route activated" });
 
   try {
     const isUserExist = await User.findOne({ email: req.fields.email });
@@ -24,25 +24,53 @@ router.post("/users/signup", async (req, res) => {
       const token = uid2(64);
 
       const newUser = new User({
-        account: {
-          username: req.fields.username,
-        },
+        username: req.fields.username,
         email: req.fields.email,
         password: req.fields.password,
         token: token,
         hash: hash,
-        token: token,
+        salt: salt,
       });
       await newUser.save();
+      res.status(200).json({
+        _id: newUser._id,
+        username: newUser.username,
+        token: newUser.token,
+      });
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
+    console.log(error.message);
   }
 });
 
 router.post("/users/signin", async (req, res) => {
   console.log(req.fields);
-  res.status(200).json({ message: "sign in route activated" });
+  //   res.status(200).json({ message: "sign in route activated" });
+  try {
+    const user = await User.findOne({ email: req.fields.email });
+    if (user === null) {
+      res.status(401).json({ message: "Unauthorized ! 1" });
+    } else {
+      console.log(user.hash, "hash à comparer");
+      const newHash = SHA256(req.fields.password + user.salt).toString(
+        encBase64
+      );
+      console.log("mon nouveau hash", newHash);
+      if (user.hash === newHash) {
+        res.json({
+          _id: user._id,
+          username: user.username,
+          token: user.token,
+        });
+      } else {
+        res.status(401).json({ message: "Unauthorized ! 2" });
+      }
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+    console.log(error.message);
+  }
 });
 
 module.exports = router;

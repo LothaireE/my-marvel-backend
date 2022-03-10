@@ -24,6 +24,9 @@ app.use(charactersRoutes);
 const usersRoutes = require("./routes/users");
 app.use(usersRoutes);
 
+const favoritesRoutes = require("./routes/favorites");
+app.use(favoritesRoutes);
+
 app.listen(process.env.PORT, () => {
   console.log("Server started");
 });
