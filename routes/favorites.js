@@ -6,26 +6,55 @@ const router = express.Router();
 const User = require("../models/User");
 
 router.post("/favorites", async (req, res) => {
-  console.log(req.fields.characters);
-  // console.log("isUserExist==>", isUserExist);
+  //   console.log("req.fields.userId", req.fields.userId);
+  //   console.log("req.fields.characters._id", req.fields.characters._id);
 
   try {
     const isUserExist = await User.findOne({ _id: req.fields.userId });
-    // console.log("mon user enregistré en bdd", isUserExist);
     if (isUserExist === null) {
-      //   console.log("s'affiche si mon isUserExist est invalide");
       res.status(400).json({ message: "userId invalid" });
     } else {
-      //   console.log("s'affiche si mon isUserExist est valide");
-      //   console.log("isUserExist.favCharacters==>", isUserExist.favCharacters);
-      const favCharactersArray = isUserExist.favCharacters;
-      console.log(favCharactersArray);
-      //   console.log("before", favCharactersArray);
-      favCharactersArray.push(req.fields.characters);
-      console.log("after ===>", favCharactersArray);
-      //   console.log("à push dans mon user fav tab", req.fields);
+      const charactersToFind = isUserExist.favCharacters.find(
+        (element) => element._id === req.fields.characters._id
+      );
+      if (charactersToFind) {
+        res.json({ message: "already a favorite" });
+      } else {
+        isUserExist.favCharacters.push(req.fields.characters);
+        await isUserExist.save();
+      }
     }
   } catch (error) {}
 });
 
+router.get("/favorites", async (req, res) => {
+  try {
+    const isUserExist = await User.findOne({ _id: req.query.id });
+    // console.log("isUserExist==>", isUserExist.favCharacters);
+    if (isUserExist === null) {
+      res.status(400).json({ message: "userId invalid" });
+    } else {
+      res.status(200).json(isUserExist.favCharacters);
+      console.log();
+    }
+  } catch (error) {}
+});
+
+router.delete("/favorites", async (req, res) => {
+  console.log(req.fields);
+  console.log(req.fields.userId);
+  console.log(req.fields.favCharacterId);
+
+  const isUserExist = await User.findOne({ _id: req.fields.userId });
+  if (isUserExist === null) {
+    res.status(400).json({ message: "userId invalid" });
+  } else {
+    isUserExist.favCharacters = isUserExist.favCharacters.filter(
+      (element) => element._id !== req.fields.favCharacterId
+    );
+
+    await isUserExist.save();
+    res.json({ message: "Character removed" });
+  }
+});
 module.exports = router;
